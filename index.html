@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Rubik's Cube</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cube.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="pixel-text">RUBIK'S CUBE</h1>
+        <div class="scene">
+            <div class="cube" id="cube">
+                <!-- Pieces injected by JS -->
+            </div>
+        </div>
+        <div class="controls pixel-text">
+            <button onclick="rotateSlice('x', 1, 1)">R</button>
+            <button onclick="rotateSlice('x', 1, -1)">R'</button>
+            <button onclick="rotateSlice('x', -1, -1)">L</button>
+            <button onclick="rotateSlice('x', -1, 1)">L'</button>
+            <button onclick="rotateSlice('y', -1, -1)">U</button>
+            <button onclick="rotateSlice('y', -1, 1)">U'</button>
+            <button onclick="rotateSlice('y', 1, 1)">D</button>
+            <button onclick="rotateSlice('y', 1, -1)">D'</button>
+            <button onclick="rotateSlice('z', 1, 1)">F</button>
+            <button onclick="rotateSlice('z', 1, -1)">F'</button>
+            <button onclick="rotateSlice('z', -1, -1)">B</button>
+            <button onclick="rotateSlice('z', -1, 1)">B'</button>
+            <button onclick="shuffleCube()" style="grid-column: span 4; background: #e74c3c;">SHUFFLE</button>
+        </div>
+        <div class="camera-controls pixel-text">
+            <p>Drag outside buttons to rotate camera</p>
+        </div>
+    </div>
+    <script src="cube design.js"></script>
+</body>
+</html>
