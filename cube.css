@@ -6,8 +6,13 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #2b2b2b;
-    color: #fff;
+    background-color: #ffccdc;
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.05) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.05) 2px, transparent 2px);
+    background-size: 30px 30px;
+    background-position: center;
+    color: #000;
     font-family: 'Press Start 2P', monospace;
     display: flex;
     justify-content: center;
@@ -24,13 +29,13 @@ body {
 }
 
 .pixel-text {
-    text-shadow: 3px 3px 0 #000;
+    text-shadow: 2px 2px 0 #fff;
     text-align: center;
 }
 
 h1 {
-    font-size: 24px;
-    color: #fca311;
+    font-size: 28px;
+    color: #000;
     margin: 0;
     letter-spacing: 2px;
 }
@@ -38,7 +43,7 @@ h1 {
 .scene {
     width: 200px;
     height: 200px;
-    perspective: 800px;
+    perspective: 10000px; /* High perspective to simulate isometric view */
 }
 
 .cube {
@@ -46,7 +51,7 @@ h1 {
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transform: rotateX(-30deg) rotateY(-45deg);
+    transform: rotateX(-35.264deg) rotateY(-45deg); /* Isometric projection angle */
 }
 
 .piece {
@@ -62,15 +67,7 @@ h1 {
     position: absolute;
     width: 60px;
     height: 60px;
-    border: 4px solid #000;
-}
-
-/* Pixel art bevel */
-.face::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    box-shadow: inset -3px -3px 0 rgba(0,0,0,0.3), inset 3px 3px 0 rgba(255,255,255,0.4);
+    border: 6px solid #000; /* Thicker borders to match the pixel art images */
 }
 
 /* Face positions */
@@ -81,31 +78,30 @@ h1 {
 .face-front  { transform: rotateY(  0deg) translateZ(30px); }
 .face-back   { transform: rotateY(180deg) translateZ(30px); }
 
-/* Colors */
-.color-r { background-color: #ff3b30; }
-.color-l { background-color: #ff9500; }
+/* Pure pixel-art colors matching the images */
+.color-r { background-color: #e50000; }
+.color-l { background-color: #ff8a00; }
 .color-u { background-color: #ffffff; }
-.color-d { background-color: #ffcc00; }
-.color-f { background-color: #4cd964; }
-.color-b { background-color: #007aff; }
-.color-none { background-color: #222; border-color: #111; }
-.color-none::after { display: none; }
+.color-d { background-color: #ffee00; }
+.color-f { background-color: #00b020; }
+.color-b { background-color: #0033ff; }
+.color-none { background-color: #000; border-color: #000; }
 
 .controls {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    background: #1a1a1a;
+    background: #fff;
     padding: 20px;
-    border: 4px solid #000;
-    box-shadow: inset -4px -4px 0 rgba(0,0,0,0.5), inset 4px 4px 0 rgba(255,255,255,0.1);
+    border: 6px solid #000;
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
 }
 
 button {
     font-family: 'Press Start 2P', monospace;
     font-size: 12px;
-    background: #4a4a4a;
-    color: white;
+    background: #fff;
+    color: #000;
     border: 4px solid #000;
     padding: 12px 0;
     cursor: pointer;
@@ -120,11 +116,11 @@ button:active {
 }
 
 button:hover {
-    background: #6a6a6a;
+    background: #f0f0f0;
 }
 
 .camera-controls {
     font-size: 10px;
-    color: #888;
-    text-shadow: 2px 2px 0 #000;
+    color: #555;
+    text-shadow: 2px 2px 0 #fff;
 }
