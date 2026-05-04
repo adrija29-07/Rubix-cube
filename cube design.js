@@ -107,14 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Shuffle feature
-    window.shuffleCube = async function() {
+    window.shuffleCube = async function(numMoves = 20) {
         if (isAnimating) return;
         const moves = [
             ['x', 1, 1], ['x', 1, -1], ['x', -1, 1], ['x', -1, -1],
             ['y', 1, 1], ['y', 1, -1], ['y', -1, 1], ['y', -1, -1],
             ['z', 1, 1], ['z', 1, -1], ['z', -1, 1], ['z', -1, -1],
         ];
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < numMoves; i++) {
             const move = moves[Math.floor(Math.random() * moves.length)];
             await rotateSlice(move[0], move[1], move[2], 60);
         }
