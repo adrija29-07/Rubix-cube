@@ -6,7 +6,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #ffccdc;
+    background-color: #e7a1b7;
     background-image:
         linear-gradient(rgba(0, 0, 0, 0.05) 2px, transparent 2px),
         linear-gradient(90deg, rgba(0, 0, 0, 0.05) 2px, transparent 2px);
@@ -100,27 +100,27 @@ h1 {
 
 /* Pure pixel-art colors matching the images */
 .color-r {
-    background-color: #e50000;
+    background-color: #eb5b5b;
 }
 
 .color-l {
-    background-color: #ff8a00;
+    background-color: #634018;
 }
 
 .color-u {
-    background-color: #ffffff;
+    background-color: #f17dd2;
 }
 
 .color-d {
-    background-color: #ffee00;
+    background-color: #fdf68d;
 }
 
 .color-f {
-    background-color: #00b020;
+    background-color: #59dcaa;
 }
 
 .color-b {
-    background-color: #0033ff;
+    background-color: #56bfe2;
 }
 
 .color-none {
@@ -201,6 +201,3 @@ button:hover {
     -moz-transform: rotateX(-90deg) translateX(0px) translateY(0px) translateZ(112px);
     -webkit-transform: rotateX(-90deg) translateX(0px) translateY(0px) translateZ(112px)
 }
-
-.activeSectiontop #d3Cube>div#side1>div>a {
-    background-size: auto
