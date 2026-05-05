@@ -3,6 +3,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const pieces = [];
     let isAnimating = false;
 
+    // Timer and state
+    let startTime = 0;
+    let timerInterval = null;
+    let isTimerRunning = false;
+    let isScrambled = false;
+
+    function updateTimer() {
+        const elapsed = Date.now() - startTime;
+        const minutes = Math.floor(elapsed / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        const millis = elapsed % 1000;
+        document.getElementById('timer').innerText = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${millis.toString().padStart(3, '0')}`;
+    }
+
+    function startTimer() {
+        if (!isTimerRunning) {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 10);
+            isTimerRunning = true;
+        }
+    }
+
+    function stopTimer() {
+        if (isTimerRunning) {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+    }
+
+    const faceNormals = {
+        'face-right': {x: 1, y: 0, z: 0},
+        'face-left': {x: -1, y: 0, z: 0},
+        'face-top': {x: 0, y: -1, z: 0},
+        'face-bottom': {x: 0, y: 1, z: 0},
+        'face-front': {x: 0, y: 0, z: 1},
+        'face-back': {x: 0, y: 0, z: -1}
+    };
+
+    function getSolvedState() {
+        const colorNormals = {};
+        for (const p of pieces) {
+            const matrixStr = getComputedStyle(p.element).transform;
+            if (matrixStr === 'none') continue;
+            const matrix = new DOMMatrix(matrixStr);
+            const faces = p.element.children;
+            for (let i = 0; i < faces.length; i++) {
+                const face = faces[i];
+                const colorClass = Array.from(face.classList).find(c => c.startsWith('color-') && c !== 'color-none');
+                if (!colorClass) continue;
+                
+                const faceClass = Array.from(face.classList).find(c => c.startsWith('face-'));
+                const initialNormal = faceNormals[faceClass];
+                
+                let nx = matrix.m11 * initialNormal.x + matrix.m21 * initialNormal.y + matrix.m31 * initialNormal.z;
+                let ny = matrix.m12 * initialNormal.x + matrix.m22 * initialNormal.y + matrix.m32 * initialNormal.z;
+                let nz = matrix.m13 * initialNormal.x + matrix.m23 * initialNormal.y + matrix.m33 * initialNormal.z;
+                
+                nx = Math.round(nx);
+                ny = Math.round(ny);
+                nz = Math.round(nz);
+                
+                const normalKey = `${nx},${ny},${nz}`;
+                
+                if (!colorNormals[colorClass]) {
+                    colorNormals[colorClass] = normalKey;
+                } else if (colorNormals[colorClass] !== normalKey) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // Build the cube
     function getFaceColor(x, y, z, face) {
         if (face === 'right' && x === 1) return 'color-r';
@@ -95,6 +169,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 pivot.remove();
                 isAnimating = false;
+                
+                if (speed !== 60 && isScrambled) {
+                    if (!isTimerRunning) {
+                        startTimer();
+                    } else if (getSolvedState()) {
+                        stopTimer();
+                        isScrambled = false;
+                        setTimeout(() => alert(`Solved in ${document.getElementById('timer').innerText}!`), 10);
+                    }
+                }
+                
                 resolve();
             };
 
@@ -109,6 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Shuffle feature
     window.shuffleCube = async function(numMoves = 20) {
         if (isAnimating) return;
+        
+        stopTimer();
+        document.getElementById('timer').innerText = "00:00.000";
+        isScrambled = false;
+        
         const moves = [
             ['x', 1, 1], ['x', 1, -1], ['x', -1, 1], ['x', -1, -1],
             ['y', 1, 1], ['y', 1, -1], ['y', -1, 1], ['y', -1, -1],
@@ -118,6 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const move = moves[Math.floor(Math.random() * moves.length)];
             await rotateSlice(move[0], move[1], move[2], 60);
         }
+        
+        isScrambled = true;
     };
 
     // Camera and Slice interaction
