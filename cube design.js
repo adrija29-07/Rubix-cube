@@ -120,13 +120,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Camera interaction
+    // Camera and Slice interaction
     let isDragging = false;
+    let sliceDragInfo = null;
     let prevX = 0, prevY = 0;
-    let rotX = -30, rotY = -45;
+    let rotX = -35.264, rotY = -45;
+
+    function getFaceNormal(element) {
+        if (element.classList.contains('face-right') || element.classList.contains('face-left')) return 'x';
+        if (element.classList.contains('face-top') || element.classList.contains('face-bottom')) return 'y';
+        if (element.classList.contains('face-front') || element.classList.contains('face-back')) return 'z';
+        return null;
+    }
 
     function startDrag(x, y, target) {
         if (target.tagName === 'BUTTON') return;
+        
+        if (target.classList.contains('face')) {
+            const pieceEl = target.parentElement;
+            const pieceData = pieces.find(p => p.element === pieceEl);
+            const normal = getFaceNormal(target);
+            if (pieceData && normal) {
+                sliceDragInfo = {
+                    startX: x,
+                    startY: y,
+                    piece: pieceData,
+                    faceNormal: normal
+                };
+            }
+        }
+        
         isDragging = true;
         prevX = x;
         prevY = y;
@@ -134,20 +157,76 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function moveDrag(x, y) {
         if (!isDragging) return;
-        const dx = x - prevX;
-        const dy = y - prevY;
         
-        rotY += dx * 0.5;
-        rotX -= dy * 0.5;
-        
-        cubeEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-        
-        prevX = x;
-        prevY = y;
+        if (sliceDragInfo && !isAnimating) {
+            const dx = x - sliceDragInfo.startX;
+            const dy = y - sliceDragInfo.startY;
+            
+            if (Math.sqrt(dx * dx + dy * dy) > 10) {
+                const N = sliceDragInfo.faceNormal;
+                const P = sliceDragInfo.piece.pos;
+                
+                const possibleRotations = [];
+                ['x', 'y', 'z'].forEach(axis => {
+                    if (axis !== N) {
+                        possibleRotations.push({axis, dir: 1});
+                        possibleRotations.push({axis, dir: -1});
+                    }
+                });
+                
+                const matrixStr = getComputedStyle(cubeEl).transform;
+                const matrix = new DOMMatrix(matrixStr !== 'none' ? matrixStr : undefined);
+                
+                let bestRot = null;
+                let maxDot = -Infinity;
+                
+                possibleRotations.forEach(rot => {
+                    let v3d = {x: 0, y: 0, z: 0};
+                    if (rot.axis === 'x') {
+                        v3d.y = -P.z * rot.dir;
+                        v3d.z = P.y * rot.dir;
+                    } else if (rot.axis === 'y') {
+                        v3d.x = P.z * rot.dir;
+                        v3d.z = -P.x * rot.dir;
+                    } else if (rot.axis === 'z') {
+                        v3d.x = -P.y * rot.dir;
+                        v3d.y = P.x * rot.dir;
+                    }
+                    
+                    const vx_screen = matrix.m11 * v3d.x + matrix.m21 * v3d.y + matrix.m31 * v3d.z;
+                    const vy_screen = matrix.m12 * v3d.x + matrix.m22 * v3d.y + matrix.m32 * v3d.z;
+                    
+                    const dot = vx_screen * dx + vy_screen * dy;
+                    
+                    if (dot > maxDot) {
+                        maxDot = dot;
+                        bestRot = rot;
+                    }
+                });
+                
+                if (bestRot) {
+                    rotateSlice(bestRot.axis, P[bestRot.axis], bestRot.dir, 300);
+                    isDragging = false;
+                    sliceDragInfo = null;
+                }
+            }
+        } else if (!sliceDragInfo) {
+            const dx = x - prevX;
+            const dy = y - prevY;
+            
+            rotY += dx * 0.5;
+            rotX -= dy * 0.5;
+            
+            cubeEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            
+            prevX = x;
+            prevY = y;
+        }
     }
 
     function endDrag() {
         isDragging = false;
+        sliceDragInfo = null;
     }
 
     document.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY, e.target));

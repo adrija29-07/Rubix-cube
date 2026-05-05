@@ -7,7 +7,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #ffccdc;
-    background-image: 
+    background-image:
         linear-gradient(rgba(0, 0, 0, 0.05) 2px, transparent 2px),
         linear-gradient(90deg, rgba(0, 0, 0, 0.05) 2px, transparent 2px);
     background-size: 30px 30px;
@@ -43,7 +43,8 @@ h1 {
 .scene {
     width: 200px;
     height: 200px;
-    perspective: 10000px; /* High perspective to simulate isometric view */
+    perspective: 10000px;
+    /* High perspective to simulate isometric view */
 }
 
 .cube {
@@ -51,7 +52,8 @@ h1 {
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transform: rotateX(-35.264deg) rotateY(-45deg); /* Isometric projection angle */
+    transform: rotateX(-35.264deg) rotateY(-45deg);
+    /* Isometric projection angle */
 }
 
 .piece {
@@ -67,25 +69,64 @@ h1 {
     position: absolute;
     width: 60px;
     height: 60px;
-    border: 6px solid #000; /* Thicker borders to match the pixel art images */
+    border: 6px solid #000;
+    /* Thicker borders to match the pixel art images */
 }
 
 /* Face positions */
-.face-right  { transform: rotateY( 90deg) translateZ(30px); }
-.face-left   { transform: rotateY(-90deg) translateZ(30px); }
-.face-top    { transform: rotateX( 90deg) translateZ(30px); }
-.face-bottom { transform: rotateX(-90deg) translateZ(30px); }
-.face-front  { transform: rotateY(  0deg) translateZ(30px); }
-.face-back   { transform: rotateY(180deg) translateZ(30px); }
+.face-right {
+    transform: rotateY(90deg) translateZ(30px);
+}
+
+.face-left {
+    transform: rotateY(-90deg) translateZ(30px);
+}
+
+.face-top {
+    transform: rotateX(90deg) translateZ(30px);
+}
+
+.face-bottom {
+    transform: rotateX(-90deg) translateZ(30px);
+}
+
+.face-front {
+    transform: rotateY(0deg) translateZ(30px);
+}
+
+.face-back {
+    transform: rotateY(180deg) translateZ(30px);
+}
 
 /* Pure pixel-art colors matching the images */
-.color-r { background-color: #e50000; }
-.color-l { background-color: #ff8a00; }
-.color-u { background-color: #ffffff; }
-.color-d { background-color: #ffee00; }
-.color-f { background-color: #00b020; }
-.color-b { background-color: #0033ff; }
-.color-none { background-color: #000; border-color: #000; }
+.color-r {
+    background-color: #e50000;
+}
+
+.color-l {
+    background-color: #ff8a00;
+}
+
+.color-u {
+    background-color: #ffffff;
+}
+
+.color-d {
+    background-color: #ffee00;
+}
+
+.color-f {
+    background-color: #00b020;
+}
+
+.color-b {
+    background-color: #0033ff;
+}
+
+.color-none {
+    background-color: #000;
+    border-color: #000;
+}
 
 .controls {
     display: grid;
@@ -94,7 +135,7 @@ h1 {
     background: #fff;
     padding: 20px;
     border: 6px solid #000;
-    box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
 }
 
 button {
@@ -124,3 +165,42 @@ button:hover {
     color: #555;
     text-shadow: 2px 2px 0 #fff;
 }
+
+.activeSectiontop #side1 {
+    transform: rotatex(90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -moz-transform: rotatex(90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -webkit-transform: rotatex(90deg) translateX(0px) translateY(0px) translateZ(112px)
+}
+
+.activeSectiontop #side2 {
+    transform: rotateY(-90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -moz-transform: rotateY(-90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -webkit-transform: rotateY(-90deg) translateX(0px) translateY(0px) translateZ(112px)
+}
+
+.activeSectiontop #side3 {
+    transform: translateX(0px) translateY(0px) translateZ(112px);
+    -moz-transform: translateX(0px) translateY(0px) translateZ(112px);
+    -webkit-transform: translateX(0px) translateY(0px) translateZ(112px)
+}
+
+.activeSectiontop #side4 {
+    transform: rotateY(90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -moz-transform: rotateY(90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -webkit-transform: rotateY(90deg) translateX(0px) translateY(0px) translateZ(112px)
+}
+
+.activeSectiontop #side5 {
+    transform: rotateY(180deg) translateX(0px) translateY(0px) translateZ(112px);
+    -moz-transform: rotateY(180deg) translateX(0px) translateY(0px) translateZ(112px);
+    -webkit-transform: rotateY(180deg) translateX(0px) translateY(0px) translateZ(112px)
+}
+
+.activeSectiontop #side6 {
+    transform: rotateX(-90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -moz-transform: rotateX(-90deg) translateX(0px) translateY(0px) translateZ(112px);
+    -webkit-transform: rotateX(-90deg) translateX(0px) translateY(0px) translateZ(112px)
+}
+
+.activeSectiontop #d3Cube>div#side1>div>a {
+    background-size: auto
