@@ -5,32 +5,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Timer and state
     let startTime = 0;
+    let elapsedTime = 0;
     let timerInterval = null;
     let isTimerRunning = false;
     let isScrambled = false;
 
     function updateTimer() {
-        const elapsed = Date.now() - startTime;
-        const minutes = Math.floor(elapsed / 60000);
-        const seconds = Math.floor((elapsed % 60000) / 1000);
-        const millis = elapsed % 1000;
+        const totalElapsed = elapsedTime + (isTimerRunning ? (Date.now() - startTime) : 0);
+        const minutes = Math.floor(totalElapsed / 60000);
+        const seconds = Math.floor((totalElapsed % 60000) / 1000);
+        const millis = totalElapsed % 1000;
         document.getElementById('timer').innerText = 
             `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${millis.toString().padStart(3, '0')}`;
     }
 
-    function startTimer() {
+    window.startTimer = function() {
         if (!isTimerRunning) {
             startTime = Date.now();
             timerInterval = setInterval(updateTimer, 10);
             isTimerRunning = true;
         }
-    }
+    };
 
-    function stopTimer() {
+    window.pauseTimer = function() {
+        if (isTimerRunning) {
+            elapsedTime += Date.now() - startTime;
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            updateTimer();
+        }
+    };
+
+    function resetTimer() {
         if (isTimerRunning) {
             clearInterval(timerInterval);
             isTimerRunning = false;
         }
+        elapsedTime = 0;
+        updateTimer();
     }
 
     const faceNormals = {
@@ -172,9 +184,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (speed !== 60 && isScrambled) {
                     if (!isTimerRunning) {
-                        startTimer();
+                        window.startTimer();
                     } else if (getSolvedState()) {
-                        stopTimer();
+                        window.pauseTimer();
                         isScrambled = false;
                         setTimeout(() => alert(`Solved in ${document.getElementById('timer').innerText}!`), 10);
                     }
@@ -195,8 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.shuffleCube = async function(numMoves = 20) {
         if (isAnimating) return;
         
-        stopTimer();
-        document.getElementById('timer').innerText = "00:00.000";
+        resetTimer();
         isScrambled = false;
         
         const moves = [
@@ -210,6 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         isScrambled = true;
+        if (numMoves === 20) {
+            window.startTimer();
+        }
     };
 
     // Camera and Slice interaction
