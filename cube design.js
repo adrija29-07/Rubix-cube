@@ -132,6 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isAnimating) return resolve();
             isAnimating = true;
 
+            if (speed !== 60 && isScrambled && !isTimerRunning) {
+                window.startTimer();
+            }
+
             const piecesToRotate = pieces.filter(p => p.pos[axis] === value);
             
             const pivot = document.createElement('div');
@@ -183,9 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isAnimating = false;
                 
                 if (speed !== 60 && isScrambled) {
-                    if (!isTimerRunning) {
-                        window.startTimer();
-                    } else if (getSolvedState()) {
+                    if (getSolvedState()) {
                         window.pauseTimer();
                         isScrambled = false;
                         setTimeout(() => alert(`Solved in ${document.getElementById('timer').innerText}!`), 10);
@@ -221,9 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         isScrambled = true;
-        if (numMoves === 20) {
-            window.startTimer();
-        }
     };
 
     // Camera and Slice interaction
