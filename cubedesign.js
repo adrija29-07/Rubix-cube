@@ -108,8 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pieceEl = document.createElement('div');
                 pieceEl.className = 'piece';
                 
-                // Adjusted spacing for 80px pieces
-                pieceEl.style.transform = `translate3d(${x * 82}px, ${y * 82}px, ${z * 82}px)`;
+                pieceEl.style.transform = `translate3d(${x * 62}px, ${y * 62}px, ${z * 62}px)`;
 
                 faces.forEach(face => {
                     const faceEl = document.createElement('div');
@@ -149,13 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             piecesToRotate.forEach(p => pivot.appendChild(p.element));
 
-            // Force browser reflow
+            // Force browser reflow to apply the DOM structure before animating
             pivot.offsetHeight;
 
-            pivot.style.transition = `transform ${speed}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+            pivot.style.transition = `transform ${speed}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
             pivot.style.transform = `rotate${axis.toUpperCase()}(${dir * 90}deg)`;
 
             const onEnd = () => {
+                // Compute final local transforms using DOMMatrix
                 const pivotMatrix = new DOMMatrix(getComputedStyle(pivot).transform);
                 
                 piecesToRotate.forEach(p => {
@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     p.element.style.transform = finalMatrix.toString();
                     cubeEl.appendChild(p.element);
                     
+                    // Update logical positions based on rotation matrix
                     let {x, y, z} = p.pos;
                     if (axis === 'x') {
                         p.pos.y = dir > 0 ? -z : z;
@@ -176,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         p.pos.y = dir > 0 ? x : -x;
                     }
                     
+                    // Round to avoid accumulation of floating point errors
                     p.pos.x = Math.round(p.pos.x);
                     p.pos.y = Math.round(p.pos.y);
                     p.pos.z = Math.round(p.pos.z);
@@ -188,10 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (getSolvedState()) {
                         window.pauseTimer();
                         isScrambled = false;
-                        cubeEl.classList.add('solved');
-                        setTimeout(() => {
-                            alert(`🌟 SOLVED! 🌟\nTime: ${document.getElementById('timer').innerText}`);
-                        }, 100);
+                        setTimeout(() => alert(`Solved in ${document.getElementById('timer').innerText}!`), 10);
                     }
                 }
                 
@@ -206,29 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Keyboard support
-    document.addEventListener('keydown', (e) => {
-        if (isAnimating) return;
-        const key = e.key.toUpperCase();
-        const dir = e.shiftKey ? -1 : 1;
-        
-        switch(key) {
-            case 'R': rotateSlice('x', 1, dir); break;
-            case 'L': rotateSlice('x', -1, -dir); break; // L is opposite of R
-            case 'U': rotateSlice('y', -1, -dir); break; // U is opposite of D
-            case 'D': rotateSlice('y', 1, dir); break;
-            case 'F': rotateSlice('z', 1, dir); break;
-            case 'B': rotateSlice('z', -1, -dir); break; // B is opposite of F
-        }
-    });
-
     // Shuffle feature
     window.shuffleCube = async function(numMoves = 20) {
         if (isAnimating) return;
         
         resetTimer();
         isScrambled = false;
-        cubeEl.classList.remove('solved');
         
         const moves = [
             ['x', 1, 1], ['x', 1, -1], ['x', -1, 1], ['x', -1, -1],
@@ -247,9 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDragging = false;
     let sliceDragInfo = null;
     let prevX = 0, prevY = 0;
-    let rotX = -25, rotY = -45; // Slightly flatter starting angle
-
-    cubeEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    let rotX = -35.264, rotY = -45;
 
     function getFaceNormal(element) {
         if (element.classList.contains('face-right') || element.classList.contains('face-left')) return 'x';
@@ -259,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startDrag(x, y, target) {
-        if (target.tagName === 'BUTTON' || target.closest('button')) return;
+        if (target.tagName === 'BUTTON') return;
         
         if (target.classList.contains('face')) {
             const pieceEl = target.parentElement;
@@ -287,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dx = x - sliceDragInfo.startX;
             const dy = y - sliceDragInfo.startY;
             
-            if (Math.sqrt(dx * dx + dy * dy) > 20) { // Increased threshold for stability
+            if (Math.sqrt(dx * dx + dy * dy) > 10) {
                 const N = sliceDragInfo.faceNormal;
                 const P = sliceDragInfo.piece.pos;
                 
